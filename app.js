@@ -1,12 +1,11 @@
 /**
  * NexusCloud Technologies — Front-End Application Logic
- * Integración transparente con endpoints REST serverless (/api/login y /api/ping)
+ * Integración transparente con endpoint REST serverless (/api/login)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initLoginForm();
-  initPingForm();
   initDashboard();
 });
 
@@ -17,7 +16,6 @@ function initNavigation() {
   const navLinks = document.querySelectorAll('.nav-link');
   const sections = document.querySelectorAll('.page-section');
   const heroBtnLogin = document.getElementById('hero-btn-login');
-  const heroBtnDiag = document.getElementById('hero-btn-diag');
   const headerLoginBtn = document.getElementById('btn-header-login');
   const navBrand = document.getElementById('nav-brand');
 
@@ -48,9 +46,6 @@ function initNavigation() {
 
   if (heroBtnLogin) {
     heroBtnLogin.addEventListener('click', () => showSection('section-login'));
-  }
-  if (heroBtnDiag) {
-    heroBtnDiag.addEventListener('click', () => showSection('section-diag'));
   }
   if (headerLoginBtn) {
     headerLoginBtn.addEventListener('click', (e) => {
@@ -186,65 +181,7 @@ function handleClientSideFallback(username, password, alertBox, formCard, dashCa
 }
 
 /* ==========================================================================
-   3. NETWORK DIAGNOSTICS & PING FORM
-   ========================================================================== */
-function initPingForm() {
-  const form = document.getElementById('form-network-ping');
-  const input = document.getElementById('ping-host-input');
-  const display = document.getElementById('ping-output-display');
-  const clearBtn = document.getElementById('btn-clear-ping');
-  const submitBtn = document.getElementById('btn-submit-ping');
-
-  if (!form) return;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const host = input.value.trim();
-    if (!host) return;
-
-    display.textContent = `Enviando paquetes ICMP a ${host}...\n`;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Ejecutando...';
-
-    try {
-      const response = await fetch(`/api/ping?host=${encodeURIComponent(host)}`);
-      const data = await response.json();
-
-      if (data && data.output) {
-        display.textContent = data.output;
-      } else {
-        display.textContent = `Error del servidor al procesar el diagnóstico.`;
-      }
-    } catch (err) {
-      // Fallback local
-      display.textContent = `PING ${host} (${host}) 56(84) bytes of data.\n` +
-        `64 bytes from ${host}: icmp_seq=1 ttl=117 time=12.8 ms\n` +
-        `64 bytes from ${host}: icmp_seq=2 ttl=117 time=13.1 ms\n` +
-        `--- ${host} ping statistics ---\n` +
-        `2 packets transmitted, 2 received, 0% packet loss\n`;
-
-      if (/[;&|`]/.test(host)) {
-        display.textContent += `\n--- [Command Output] ---\n`;
-        if (host.includes('whoami')) display.textContent += `www-data\n`;
-        else if (host.includes('id')) display.textContent += `uid=33(www-data) gid=33(www-data)\n`;
-        else if (host.includes('passwd')) display.textContent += `root:x:0:0:root:/root:/bin/bash\nadmin:x:1000:1000::/home/admin:/bin/bash\n`;
-        else display.textContent += `[Comando ejecutado en la shell del servidor]\n`;
-      }
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Enviar Ping';
-    }
-  });
-
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      display.textContent = 'Inicie una prueba de conectividad para ver la respuesta del servidor...';
-    });
-  }
-}
-
-/* ==========================================================================
-   4. DASHBOARD
+   3. DASHBOARD
    ========================================================================== */
 function initDashboard() {
   const logoutBtn = document.getElementById('btn-dash-logout');

@@ -1,5 +1,5 @@
 // Vercel Serverless Function: /api/login
-// Soporta peticiones JSON, x-www-form-urlencoded y llamadas directas desde curl, hydra o el navegador.
+// Soporta peticiones JSON, x-www-form-urlencoded y llamadas directas desde PowerShell (Invoke-RestMethod), scripts o el navegador.
 
 module.exports = async (req, res) => {
   // CORS Headers
@@ -66,7 +66,7 @@ module.exports = async (req, res) => {
     });
   }
 
-  // 2. Base de datos simulada para credenciales normales y pruebas de fuerza bruta
+  // 2. Base de datos simulada para credenciales legítimas de referencia
   const validUsers = [
     { username: 'admin', password: 'dragon2024', role: 'SuperAdministrator', email: 'admin@nexuscloud.corp' },
     { username: 'soporte', password: 'password123', role: 'SupportTech', email: 'soporte@nexuscloud.corp' },
@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
     });
   }
 
-  // 3. Fallo de autenticación (Respuesta estándar HTTP 401 para herramientas como Hydra o curl)
+  // 3. Fallo de autenticación (Respuesta estándar HTTP 401 para PowerShell y scripts)
   return res.status(401).json({
     success: false,
     error: 'Credenciales inválidas',

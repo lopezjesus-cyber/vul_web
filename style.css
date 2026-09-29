@@ -368,66 +368,6 @@ body {
 }
 .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
 
-/* Ping Console */
-.diag-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.console-box {
-  margin-top: 1.5rem;
-  background: #040711;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.console-bar {
-  background: #0d1424;
-  padding: 0.6rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.console-dots {
-  display: flex;
-  gap: 6px;
-}
-.console-dots span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #475569;
-}
-
-.console-title {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--text-dim);
-}
-
-.console-btn-clear {
-  background: none;
-  border: none;
-  color: var(--text-dim);
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-.console-btn-clear:hover { color: var(--text-main); }
-
-.console-output {
-  padding: 1.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: #38bdf8;
-  min-height: 180px;
-  white-space: pre-wrap;
-  word-break: break-all;
-  overflow-y: auto;
-}
-
 /* Login Card */
 .login-wrapper {
   max-width: 460px;

@@ -30,7 +30,6 @@
 
       <nav class="nav-links">
         <a href="#services" class="nav-link active" data-section="section-home">Inicio</a>
-        <a href="#diagnostics" class="nav-link" data-section="section-diag">Diagnóstico de Red</a>
         <a href="#login" class="nav-link" data-section="section-login" id="nav-login-btn">Acceso a Clientes</a>
       </nav>
 
@@ -50,10 +49,9 @@
       <div class="hero-section">
         <div class="hero-badge">Infraestructura Cloud de Próxima Generación</div>
         <h1 class="hero-title">Gestión Inteligente y Segura para tu Infraestructura</h1>
-        <p class="hero-subtitle">Despliega instancias de cómputo, almacenamiento distribuido y herramientas de diagnóstico en tiempo real con alta disponibilidad garantizada.</p>
+        <p class="hero-subtitle">Despliega instancias de cómputo, almacenamiento distribuido y autenticación corporativa con alta disponibilidad garantizada.</p>
         <div class="hero-actions">
           <button class="btn-primary" id="hero-btn-login">Acceder a la Consola</button>
-          <button class="btn-secondary" id="hero-btn-diag">Probar Diagnóstico de Red</button>
         </div>
       </div>
 
@@ -69,47 +67,9 @@
           <p>Aislamiento de red mediante VPC, cortafuegos de aplicación web y cifrado en tránsito.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">📡</div>
-          <h3>Telemetría & Diagnóstico</h3>
-          <p>Herramientas de red integradas para análisis de latencia ICMP, rutas de paquetes y estado de enlaces.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==============================================
-         SECTION 2: DIAGNÓSTICO DE RED (PING TOOL)
-    =============================================== -->
-    <section class="page-section" id="section-diag">
-      <div class="content-header">
-        <h2>Utilidad de Diagnóstico de Red</h2>
-        <p>Verifica la latencia y la conectividad de nodos o hosts de destino mediante paquetes ICMP.</p>
-      </div>
-
-      <div class="diag-container">
-        <div class="card glass-card">
-          <form id="form-network-ping" class="form-container">
-            <div class="form-group">
-              <label for="ping-host-input">Dirección IP o Nombre de Dominio</label>
-              <div class="input-with-button">
-                <input type="text" id="ping-host-input" placeholder="Ej: 8.8.8.8 o google.com" autocomplete="off" value="8.8.8.8">
-                <button type="submit" id="btn-submit-ping" class="btn-primary">
-                  Enviar Ping
-                </button>
-              </div>
-              <small class="hint-text">Endpoint API disponible públicamente en <code>/api/ping?host={host}</code></small>
-            </div>
-          </form>
-
-          <div class="console-box" id="ping-console-wrapper">
-            <div class="console-bar">
-              <div class="console-dots">
-                <span></span><span></span><span></span>
-              </div>
-              <span class="console-title">Resultado del Diagnóstico</span>
-              <button class="console-btn-clear" id="btn-clear-ping">Limpiar</button>
-            </div>
-            <pre class="console-output" id="ping-output-display">Inicie una prueba de conectividad para ver la respuesta del servidor...</pre>
-          </div>
+          <div class="feature-icon">🔐</div>
+          <h3>Control de Acceso & IAM</h3>
+          <p>Gestión centralizada de identidades, credenciales corporativas y roles administrativos.</p>
         </div>
       </div>
     </section>
@@ -249,12 +209,12 @@
       <div class="footer-left">
         <span class="footer-brand">NexusCloud Technologies Inc. &copy; 2026</span>
         <span class="footer-sep">|</span>
-        <span class="footer-desc">Plataforma de Operaciones de Red</span>
+        <span class="footer-desc">Plataforma Cloud & Seguridad</span>
       </div>
       <div class="footer-right">
         <a href="#services" class="footer-link">Términos</a>
         <a href="#services" class="footer-link">Privacidad</a>
-        <a href="#diagnostics" class="footer-link">Estado de Red</a>
+        <a href="#login" class="footer-link">Portal de Clientes</a>
       </div>
     </div>
   </footer>

