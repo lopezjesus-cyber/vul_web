@@ -162,6 +162,51 @@
               <code class="text-danger" id="dash-flag-display">FLAG-SQLI{nexus_sql_injection_bypass_success}</code>
             </div>
 
+            <h4 class="subtable-title">Base de Datos Interna: Tabla <code>accounts</code> (Registros de Usuarios)</h4>
+            <div class="table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Email</th>
+                    <th>Hash / Contraseña</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-accounts-tbody">
+                  <tr>
+                    <td><strong>1</strong></td>
+                    <td>admin</td>
+                    <td><span class="user-role-badge">SuperAdministrator</span></td>
+                    <td>admin@nexuscloud.corp</td>
+                    <td><code>$2y$12$e8Y5... (dragon2024)</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>2</strong></td>
+                    <td>soporte</td>
+                    <td><span class="user-role-badge">SupportTech</span></td>
+                    <td>soporte@nexuscloud.corp</td>
+                    <td><code>$2y$12$k9L2... (password123)</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>3</strong></td>
+                    <td>operador</td>
+                    <td><span class="user-role-badge">Operator</span></td>
+                    <td>operador@nexuscloud.corp</td>
+                    <td><code>$2y$12$m4N1... (operador2024)</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>4</strong></td>
+                    <td>ciso_auditor</td>
+                    <td><span class="user-role-badge">Auditor</span></td>
+                    <td>security@nexuscloud.corp</td>
+                    <td><code>$2y$12$p7X9... (NexusSec#99)</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <h4 class="subtable-title">Servidores de Producción</h4>
             <div class="table-responsive">
               <table class="dash-table">

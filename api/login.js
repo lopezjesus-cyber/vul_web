@@ -36,6 +36,14 @@ module.exports = async (req, res) => {
   const username = (body.username || '').toString().trim();
   const password = (body.password || '').toString();
 
+  // Base de datos corporativa interna (Tabla: accounts)
+  const accountsTable = [
+    { id: 1, username: 'admin', role: 'SuperAdministrator', email: 'admin@nexuscloud.corp', password_hash: '$2y$12$e8Y5T1mO... (dragon2024)', created_at: '2024-01-15' },
+    { id: 2, username: 'soporte', role: 'SupportTech', email: 'soporte@nexuscloud.corp', password_hash: '$2y$12$k9L2P4qR... (password123)', created_at: '2024-03-22' },
+    { id: 3, username: 'operador', role: 'Operator', email: 'operador@nexuscloud.corp', password_hash: '$2y$12$m4N1X8wZ... (operador2024)', created_at: '2024-06-10' },
+    { id: 4, username: 'ciso_auditor', role: 'Auditor', email: 'security@nexuscloud.corp', password_hash: '$2y$12$p7X9A3cV... (NexusSec#99)', created_at: '2024-08-01' }
+  ];
+
   // Simulación de consulta SQL interna
   const query = `SELECT * FROM accounts WHERE username = '${username}' AND password_hash = '${password}' LIMIT 1;`;
 
@@ -49,11 +57,11 @@ module.exports = async (req, res) => {
     /UNION\s+SELECT/i.test(username);
 
   if (isSqlInjection) {
-    // Bypass exitoso mediante SQLi
+    // Bypass exitoso mediante SQLi y filtración de la tabla de usuarios
     res.setHeader('Set-Cookie', 'session_token=nexus_admin_sess_9941a8e2; Path=/; HttpOnly; SameSite=Lax');
     return res.status(200).json({
       success: true,
-      message: 'Inicio de sesión correcto (Acceso Administrativo)',
+      message: 'Inicio de sesión correcto (Acceso Administrativo obtenido por SQLi)',
       user: {
         id: 1,
         username: 'admin',
@@ -62,11 +70,17 @@ module.exports = async (req, res) => {
         token: 'nexus_admin_sess_9941a8e2',
         internal_flag: 'FLAG-SQLI{nexus_sql_injection_bypass_success}'
       },
-      debug_query: query
+      debug_query: query,
+      database: {
+        table_name: 'accounts',
+        total_records: accountsTable.length,
+        columns: ['id', 'username', 'role', 'email', 'password_hash', 'created_at'],
+        records: accountsTable
+      }
     });
   }
 
-  // 2. Base de datos simulada para credenciales legítimas de referencia
+  // 2. Validación de credenciales normales
   const validUsers = [
     { username: 'admin', password: 'dragon2024', role: 'SuperAdministrator', email: 'admin@nexuscloud.corp' },
     { username: 'soporte', password: 'password123', role: 'SupportTech', email: 'soporte@nexuscloud.corp' },

