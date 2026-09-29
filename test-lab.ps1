@@ -14,7 +14,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [string]$BaseUrl = "http://localhost:3000"
+    [string]$BaseUrl = "https://vulweb-theta.vercel.app"
 )
 
 # Forzar TLS 1.2

@@ -12,7 +12,7 @@ El proyecto incluye un script de auditoría automatizado para evaluar la vulnera
 
 ```powershell
 # Ejecutar la prueba contra tu despliegue en Vercel
-.\test-lab.ps1 -BaseUrl "https://TU-DOMINIO.vercel.app"
+.\test-lab.ps1 -BaseUrl "https://vulweb-theta.vercel.app"
 
 # Si estás ejecutando en local (localhost:3000):
 .\test-lab.ps1
@@ -35,7 +35,7 @@ $body = @{
     password = "cualquiercosa"
 } | ConvertTo-Json
 
-$response = Invoke-RestMethod -Uri "https://TU-DOMINIO.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $body
+$response = Invoke-RestMethod -Uri "https://vulweb-theta.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $body
 
 # Mostrar el resultado obtenido y el usuario autenticado
 $response | Format-List
@@ -59,7 +59,7 @@ id username      role               email                    password_hash
 
 ## 💻 Prueba en la Interfaz Web Gráfica
 
-1. Entra a tu sitio web (`https://TU-DOMINIO.vercel.app`).
+1. Entra a tu sitio web (`https://vulweb-theta.vercel.app`).
 2. Ve a la sección **Acceso a Clientes**.
 3. En el formulario de inicio de sesión ingresa:
    * **Usuario:** `admin' OR '1'='1`

@@ -33,7 +33,7 @@ Puedes ejecutar el script automatizado para verificar el fallo de seguridad:
    ```
 3. Ejecuta el script contra tu URL de Vercel:
    ```powershell
-   .\test-lab.ps1 -BaseUrl "https://TU-DOMINIO.vercel.app"
+   .\test-lab.ps1 -BaseUrl "https://vulweb-theta.vercel.app"
    ```
 
 El script evaluará:
@@ -56,7 +56,7 @@ $payload = @{
 } | ConvertTo-Json
 
 # 2. Enviar la petición POST con Invoke-RestMethod
-$res = Invoke-RestMethod -Uri "https://TU-DOMINIO.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $payload
+$res = Invoke-RestMethod -Uri "https://vulweb-theta.vercel.app/api/login" -Method Post -ContentType "application/json" -Body $payload
 
 # 3. Ver el usuario autenticado y el token
 $res | Format-List
@@ -80,7 +80,7 @@ Dado que `'1'='1'` siempre es verdadero (*tautología*), la condición se cumple
 
 ## 📌 Paso 4: Validar en la Interfaz Web Gráfica
 
-1. Abre tu navegador y accede a tu enlace: `https://TU-DOMINIO.vercel.app`.
+1. Abre tu navegador y accede a tu enlace: `https://vulweb-theta.vercel.app`.
 2. Haz clic en **Acceder a la Consola** o en **Acceso a Clientes**.
 3. En el formulario de inicio de sesión:
    - **Usuario:** `admin' OR '1'='1`
