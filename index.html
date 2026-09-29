@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberLab Demo | Simulador Educativo de Vulnerabilidades Web</title>
+  <meta name="description" content="Plataforma interactiva para demostraciones educativas de ciberseguridad web: Inyección SQL, Fuerza Bruta y Ejecución de Comandos.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-group">
+        <div class="shield-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-title">SecDemo <span class="badge-v">Interactive Lab</span></h1>
+          <p class="logo-subtitle">Simulador Educativo de Vulnerabilidades & Defensas Web</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="status-pill status-ready" id="status-indicator">
+          <span class="status-dot"></span> Entorno de Demostración Activo
+        </span>
+        <button id="btn-toggle-cheatsheet" class="btn-action" title="Abrir notas y payloads para la demostración">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Guía de Exposición
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab active" id="tab-sqli" data-target="panel-sqli" role="tab" aria-selected="true">
+        <span class="tab-icon">💉</span> 1. Inyección SQL (SQLi)
+      </button>
+      <button class="nav-tab" id="tab-brute" data-target="panel-brute" role="tab" aria-selected="false">
+        <span class="tab-icon">⚡</span> 2. Fuerza Bruta & Rate Limit
+      </button>
+      <button class="nav-tab" id="tab-cmd" data-target="panel-cmd" role="tab" aria-selected="false">
+        <span class="tab-icon">🖥️</span> 3. Inyección de Comandos
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- ==============================================
+         PANEL 1: SQL INJECTION DEMO
+    =============================================== -->
+    <section class="tab-panel active" id="panel-sqli" role="tabpanel">
+      <div class="panel-header-desc">
+        <h2>Laboratorio 01: Inyección SQL en Autenticación</h2>
+        <p>Observa en tiempo real cómo un atacante evade el inicio de sesión manipulando la estructura lógica de la consulta interna y cómo los <strong>Prepared Statements</strong> neutralizan el ataque.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Interactive Form -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>Portal de Acceso Vulnerable</h3>
+            <span class="badge-mode" id="sqli-mode-badge">Modo Vulnerable</span>
+          </div>
+
+          <div class="toggle-switch-container">
+            <label class="switch-label">
+              <span>Nivel de Seguridad del Backend:</span>
+              <div class="switch-wrapper">
+                <input type="checkbox" id="sqli-secure-toggle">
+                <span class="slider round"></span>
+              </div>
+              <span id="sqli-toggle-label" class="toggle-state-text text-danger">Concatenación Insegura</span>
+            </label>
+          </div>
+
+          <form id="form-sqli-login" class="form-container">
+            <div class="form-group">
+              <label for="sqli-username">Usuario / Email</label>
+              <input type="text" id="sqli-username" placeholder="Ej: admin o payload..." autocomplete="off" value="admin">
+            </div>
+
+            <div class="form-group">
+              <label for="sqli-password">Contraseña</label>
+              <input type="text" id="sqli-password" placeholder="Contraseña..." autocomplete="off" value="supersecret123">
+            </div>
+
+            <div class="quick-payloads">
+              <span class="quick-label">Payloads para demo:</span>
+              <button type="button" class="btn-chip" data-user="admin' OR '1'='1" data-pass="anything">admin' OR '1'='1</button>
+              <button type="button" class="btn-chip" data-user="' OR 1=1 --" data-pass="">' OR 1=1 --</button>
+              <button type="button" class="btn-chip" data-user="user@empresa.com" data-pass="password123">Credenciales Normales</button>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btn-run-sqli" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Ejecutar Consulta en Backend
+              </button>
+              <button type="button" id="btn-reset-sqli" class="btn-secondary">Restablecer</button>
+            </div>
+          </form>
+
+          <!-- Result Alert Box -->
+          <div id="sqli-response-box" class="response-box hidden"></div>
+        </div>
+
+        <!-- Query Inspector & Database State -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>Inspector de Consulta SQL & Motor Interno</h3>
+            <span class="badge-tag">Runtime SQL Inspector</span>
+          </div>
+
+          <div class="code-preview-block">
+            <div class="code-header">
+              <span>Consulta generada en el servidor:</span>
+              <span class="code-lang">SQL</span>
+            </div>
+            <pre class="code-body"><code id="sqli-query-display">SELECT * FROM users WHERE username = 'admin' AND password = 'supersecret123';</code></pre>
+          </div>
+
+          <!-- Explanation of the query breakdown -->
+          <div class="breakdown-card" id="sqli-breakdown">
+            <h4>Análisis de la consulta:</h4>
+            <p id="sqli-breakdown-text">Ingresa datos o pulsa un payload para analizar cómo el motor SQL interpreta las condiciones booleanas.</p>
+          </div>
+
+          <!-- Simulated DB table -->
+          <div class="db-table-preview">
+            <div class="db-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              Tabla Simulada: <code>users</code>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>id</th>
+                    <th>username</th>
+                    <th>role</th>
+                    <th>token</th>
+                  </tr>
+                </thead>
+                <tbody id="sqli-db-tbody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         PANEL 2: BRUTE FORCE & RATE LIMITING
+    =============================================== -->
+    <section class="tab-panel" id="panel-brute" role="tabpanel">
+      <div class="panel-header-desc">
+        <h2>Laboratorio 02: Ataque de Fuerza Bruta vs. Rate Limiting</h2>
+        <p>Compara la velocidad con la que un atacante puede adivinar credenciales cuando el servidor carece de límites y cómo el bloqueo progresivo (Rate Limiting) frustra el ataque por completo.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Attack Simulator Controls -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>Simulador de Ataque por Diccionario</h3>
+            <span class="badge-mode" id="brute-mode-badge">Sin Protección</span>
+          </div>
+
+          <div class="toggle-switch-container">
+            <label class="switch-label">
+              <span>Defensa: Rate Limiter Activo:</span>
+              <div class="switch-wrapper">
+                <input type="checkbox" id="brute-defense-toggle">
+                <span class="slider round"></span>
+              </div>
+              <span id="brute-toggle-label" class="toggle-state-text text-danger">Desactivado (Vulnerable)</span>
+            </label>
+          </div>
+
+          <div class="attack-config-box">
+            <div class="config-row">
+              <label>Objetivo:</label>
+              <span class="target-badge">admin@empresa.com</span>
+            </div>
+            <div class="config-row">
+              <label>Contraseña Real:</label>
+              <span class="pwd-badge">dragon2024</span>
+            </div>
+            <div class="config-row">
+              <label>Velocidad de Ataque:</label>
+              <div class="speed-selector">
+                <button type="button" class="speed-btn active" data-speed="200">Rápido (200ms)</button>
+                <button type="button" class="speed-btn" data-speed="50">Turbo (50ms)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wordlist-preview">
+            <div class="wordlist-header">
+              <span>Diccionario cargado (Wordlist simulada):</span>
+              <span class="badge-tag" id="wordlist-count">12 contraseñas</span>
+            </div>
+            <div class="wordlist-tags" id="wordlist-items">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="btn-start-brute" class="btn-danger">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              Iniciar Ataque Automatizado
+            </button>
+            <button type="button" id="btn-stop-brute" class="btn-secondary" disabled>Detener</button>
+            <button type="button" id="btn-reset-brute" class="btn-secondary">Reiniciar</button>
+          </div>
+        </div>
+
+        <!-- Telemetry & Live Server Log -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>Telemetría del Servidor en Tiempo Real</h3>
+            <span class="live-pulse"></span>
+          </div>
+
+          <!-- Stats Counters -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-val" id="stat-attempts">0</span>
+              <span class="stat-label">Peticiones HTTP</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-val text-success" id="stat-speed">0 req/s</span>
+              <span class="stat-label">Velocidad</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-val text-warning" id="stat-blocked">0</span>
+              <span class="stat-label">Bloqueos (429)</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-val" id="stat-status">Inactivo</span>
+              <span class="stat-label">Estado</span>
+            </div>
+          </div>
+
+          <!-- Server Access Log Terminal -->
+          <div class="terminal-box">
+            <div class="terminal-bar">
+              <div class="terminal-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <span class="terminal-title">server.log — /api/v1/auth/login</span>
+              <button class="terminal-clear" id="btn-clear-brute-log">Limpiar</button>
+            </div>
+            <div class="terminal-content" id="brute-terminal">
+              <div class="log-line text-muted">[SYSTEM] Servidor en espera de solicitudes de autenticación...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         PANEL 3: COMMAND INJECTION & SHELL DEMO
+    =============================================== -->
+    <section class="tab-panel" id="panel-cmd" role="tabpanel">
+      <div class="panel-header-desc">
+        <h2>Laboratorio 03: Inyección de Comandos del Sistema Operativo</h2>
+        <p>Muchas utilidades web ejecutan herramientas del sistema (como <code>ping</code> o <code>nslookup</code>). Si los argumentos se concatenan directamente a una shell, el atacante puede encadenar comandos arbitrarios.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Command Diagnostic Form -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>Herramienta de Diagnóstico: Ping Host</h3>
+            <span class="badge-mode" id="cmd-mode-badge">Modo Vulnerable</span>
+          </div>
+
+          <div class="toggle-switch-container">
+            <label class="switch-label">
+              <span>Sanitización / Ejecución Segura:</span>
+              <div class="switch-wrapper">
+                <input type="checkbox" id="cmd-defense-toggle">
+                <span class="slider round"></span>
+              </div>
+              <span id="cmd-toggle-label" class="toggle-state-text text-danger">system() Inseguro</span>
+            </label>
+          </div>
+
+          <form id="form-cmd-tool" class="form-container">
+            <div class="form-group">
+              <label for="cmd-ip-input">Dirección IP o Dominio de Destino</label>
+              <div class="input-with-prefix">
+                <span class="input-prefix">ping -c 2</span>
+                <input type="text" id="cmd-ip-input" value="8.8.8.8; id" placeholder="Ej: 8.8.8.8 o payload...">
+              </div>
+            </div>
+
+            <div class="quick-payloads">
+              <span class="quick-label">Payloads para demo:</span>
+              <button type="button" class="btn-chip" data-cmd="8.8.8.8; whoami">8.8.8.8; whoami</button>
+              <button type="button" class="btn-chip" data-cmd="127.0.0.1 && cat /etc/passwd">127.0.0.1 && cat /etc/passwd</button>
+              <button type="button" class="btn-chip" data-cmd="1.1.1.1 | uname -a">1.1.1.1 | uname -a</button>
+              <button type="button" class="btn-chip" data-cmd="8.8.8.8">IP Legítima (8.8.8.8)</button>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btn-run-cmd" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                Ejecutar en Servidor
+              </button>
+              <button type="button" id="btn-reset-cmd" class="btn-secondary">Restablecer</button>
+            </div>
+          </form>
+
+          <div class="remediation-note">
+            <h4>💡 Por qué no hay SSH en Vercel</h4>
+            <p>Vercel es una plataforma <em>serverless</em> (sin servidor persistente ni shell del sistema operativo). En entornos reales, los servicios como SSH nunca deben exponerse con contraseñas débiles a internet, y las aplicaciones no deben invocar shells de comandos.</p>
+          </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>Salida de la Consola del Servidor</h3>
+            <span class="badge-tag">Simulated POSIX Shell</span>
+          </div>
+
+          <div class="code-preview-block">
+            <div class="code-header">
+              <span>Llamada al sistema generada:</span>
+              <span class="code-lang">Bash / Shell</span>
+            </div>
+            <pre class="code-body"><code id="cmd-invocation-display">child_process.exec("ping -c 2 8.8.8.8; id")</code></pre>
+          </div>
+
+          <div class="terminal-box tall">
+            <div class="terminal-bar">
+              <div class="terminal-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <span class="terminal-title">bash — user@app-server:/var/www</span>
+              <button class="terminal-clear" id="btn-clear-cmd-log">Limpiar</button>
+            </div>
+            <div class="terminal-content" id="cmd-terminal-output">
+              <div class="log-line text-muted">$ Listo para ejecutar peticiones...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==============================================
+       MODAL: CHEATSHEET & DEMO GUIDE
+  =============================================== -->
+  <div class="modal-overlay hidden" id="modal-cheatsheet">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📖</span>
+          <h3>Guía para el Expositor (Demostración en Vivo)</h3>
+        </div>
+        <button class="modal-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>1. Cómo presentar el módulo de Inyección SQL:</h4>
+        <ol>
+          <li>Empieza en <strong>Modo Vulnerable</strong> con el payload <code>admin' OR '1'='1</code>.</li>
+          <li>Muestra en el inspector cómo las comillas cierran la cadena y la condición <code>'1'='1'</code> hace que la cláusula <code>WHERE</code> siempre sea verdadera (True).</li>
+          <li>Explica el resultado: el atacante ingresa como administrador sin conocer la contraseña.</li>
+          <li>Activa el toggle de <strong>Prepared Statements</strong> y vuelve a ejecutar: muestra cómo la consulta parametrizada trata el texto como un literal, bloqueando la intrusión.</li>
+        </ol>
+
+        <h4>2. Cómo presentar el módulo de Fuerza Bruta:</h4>
+        <ol>
+          <li>Con la defensa desactivada, pulsa <strong>"Iniciar Ataque Automatizado"</strong>. Observa cómo prueba las claves en milisegundos y encuentra la contraseña válida.</li>
+          <li>Activa <strong>"Rate Limiter Activo"</strong> y reinicia el ataque.</li>
+          <li>Muestra la telemetría: tras 4 intentos fallidos, el servidor responde con <code>HTTP 429 Too Many Requests</code> y bloquea la IP, impidiendo que el ataque continúe.</li>
+        </ol>
+
+        <h4>3. Cómo presentar el módulo de Inyección de Comandos:</h4>
+        <ol>
+          <li>Ejecuta <code>8.8.8.8; whoami</code> y muestra cómo el operador <code>;</code> o <code>&&</code> ejecuta el segundo comando en el sistema operativo.</li>
+          <li>Activa la sanitización: el validador estricto comprueba que la entrada sea una IP válida antes de cualquier procesamiento.</li>
+        </ol>
+
+        <div class="alert-info">
+          <strong>Listo para Vercel:</strong> Esta aplicación es 100% estática y compatible con Vercel. Despliega en 1 minuto arrastrando la carpeta o conectando tu repositorio de GitHub.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btn-close-modal-footer">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>SecDemo — Laboratorio interactivo educativo para demostraciones de ciberseguridad. Listo para desplegar en Vercel.</p>
+  </footer>
+
+  <!-- Main JavaScript Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
