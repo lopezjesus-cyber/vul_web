@@ -118,7 +118,7 @@ function initSQLiLab() {
       breakdownText.innerHTML = `<strong>Modo Seguro:</strong> El motor SQL precompila la estructura de la consulta. La entrada del usuario se evalúa estrictamente como datos literales (String), imposibilitando alterar la lógica booleana del <code>WHERE</code>.`;
     } else {
       queryDisplay.innerHTML = `SELECT * FROM users WHERE username = '${user}' AND password = '${pass}';`;
-      
+
       // Analyze SQL injection characteristics
       const hasOrBypass = /('|\b)(OR|or)\b.*(=|LIKE|<|>)/i.test(user) || /--/.test(user);
       if (hasOrBypass) {
@@ -483,7 +483,7 @@ function initCmdInjectionLab() {
       if (hasInjection) {
         appendTerminal(`------------------------------------------------------------`);
         appendTerminal(`[ALERTA] Inyección de Comandos Arbitrarios Ejecutada con Éxito:`);
-        
+
         if (input.includes('whoami')) {
           appendTerminal(`www-data`);
         } else if (input.includes('id')) {
